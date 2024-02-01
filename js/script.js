@@ -1,48 +1,109 @@
-document.querySelector("body").style.backgroundImage =
-  "url('../assets/teste.png')";
+// ----------------- Global Variables -----------------
+const mainContent = createHtmlElement("main", "main-content");
+const character = createHtmlElement("div", "character");
+insertTheComponentsIntoTheWorld();
+let charPosition = true;
+// ----------------- Global Variables -----------------
 
-document.addEventListener("DOMContentLoaded", function () {
-  const personagem = document.getElementById("personagem");
+// ----------------- Simple Functions -----------------
+function backToStart() {
+  character.style.left = "0";
+  character.style.bottom = "0";
+}
 
-  document.addEventListener("click", function (event) {
-    const destinoX = event.clientX - personagem.clientWidth / 2;
-    const destinoY = event.clientY - personagem.clientHeight / 2;
+function createHtmlElement(tag, id) {
+  const newElement = document.createElement(tag);
+  newElement.id = id;
+  return newElement;
+}
 
-    moverPersonagem(destinoX, destinoY);
-  });
+function editCharacter() {
+  character.style.position = "relative";
+  character.style.width = "50px";
+  character.style.height = "50px";
+  character.style.backgroundImage =
+    "url('../resource/avatar/player/player-walk-000.png')";
+  character.style.backgroundSize = "cover";
+  character.style.left = "0";
+  character.style.bottom = "0";
+  mainContent.appendChild(character);
+}
 
-  function moverPersonagem(destinoX, destinoY) {
-    const velocidade = 0.3; // Velocidade do personagem
-    const posicaoAtualX = parseFloat(getComputedStyle(personagem).left);
-    const posicaoAtualY = parseFloat(getComputedStyle(personagem).top);
+function editMainContent() {
+  mainContent.style.display = "flex";
+  mainContent.style.width = "99vw";
+  mainContent.style.maxWidth = "99vw";
+  mainContent.style.height = "97vh";
+  mainContent.style.maxHeight = "97vh";
+  document.body.appendChild(mainContent);
+}
 
-    const deltaX = destinoX - posicaoAtualX;
-    const deltaY = destinoY - posicaoAtualY;
+function changeCharacterImage() {
+  const img01Front = 'url("../resource/avatar/player/player-walk-000.png")';
+  const img02Front = 'url("../resource/avatar/player/player-walk-001.png")';
+  const img01Back = 'url("../resource/avatar/player/player-walk-back-000.png")';
+  const img02Back = 'url("../resource/avatar/player/player-walk-back-001.png")';
 
-    const distancia = Math.hypot(deltaX, deltaY);
-
-    const tempoTotal = distancia / velocidade;
-    const startTime = performance.now();
-
-    function animar(tempoAtual) {
-      const tempoDecorrido = tempoAtual - startTime;
-      const percentualCompleto = tempoDecorrido / tempoTotal;
-
-      if (percentualCompleto < 1) {
-        const passoX = deltaX * percentualCompleto;
-        const passoY = deltaY * percentualCompleto;
-
-        personagem.style.left = posicaoAtualX + passoX + "px";
-        personagem.style.top = posicaoAtualY + passoY + "px";
-
-        requestAnimationFrame(animar);
-      } else {
-        // Chegou ao destino
-        personagem.style.left = destinoX + "px";
-        personagem.style.top = destinoY + "px";
-      }
+  if (charPosition == true) {
+    if (character.style.backgroundImage != img02Front) {
+      character.style.backgroundImage = img02Front;
+    } else {
+      character.style.backgroundImage = img01Front;
     }
-
-    requestAnimationFrame(animar);
+  } else {
+    if (character.style.backgroundImage != img02Back) {
+      character.style.backgroundImage = img02Back;
+    } else {
+      character.style.backgroundImage = img01Back;
+    }
   }
+}
+
+function insertTheComponentsIntoTheWorld() {
+  editMainContent();
+  editCharacter();
+}
+
+// ----------------- Simple Functions -----------------
+
+// ----------------- Complex Functions -----------------
+function moveChracter() {
+  window.addEventListener("keydown", (event) => {
+    const velocidade = 10; // character speed
+    const posicaoAtualX = parseFloat(getComputedStyle(character).left);
+    const posicaoAtualY = parseFloat(getComputedStyle(character).top);
+
+    if (event.defaultPrevented) {
+      return; // Do nothing if the event was already processed
+    }
+    switch (event.key) {
+      case "ArrowLeft":
+        charPosition = false;
+        changeCharacterImage();
+        character.style.left = posicaoAtualX - velocidade + "px";
+        break;
+      case "ArrowRight":
+        charPosition = true;
+        changeCharacterImage();
+        character.style.left = posicaoAtualX + velocidade + "px";
+        break;
+      case "ArrowUp":
+        charPosition = true;
+        changeCharacterImage();
+        character.style.top = posicaoAtualY - velocidade + "px";
+        break;
+      case "ArrowDown":
+        charPosition = true;
+        changeCharacterImage();
+        character.style.top = posicaoAtualY + velocidade + "px";
+        break;
+    }
+  });
+}
+// ----------------- Complex Functions -----------------
+
+// Main Function
+document.addEventListener("DOMContentLoaded", function () {
+  backToStart();
+  moveChracter();
 });
