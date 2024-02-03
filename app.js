@@ -1,100 +1,140 @@
-document.body.style.margin = "0";
-document.body.style.padding = "0";
+// Cria um objeto para representar o personagem
+const personagem = {
+  raio: 20,
+  x: 0,
+  y: 0,
+  pontoInicialX: 0,
+  pulando: false,
+  puloVelocidade: 15,
+  puloAltura: 50,
+  dy: 0,
+  aceleracaoGravitacional: 0.5,
+  dx: 0,
+};
 
-// Variables
-let isJumping = false; // Adiciona uma flag para verificar se o personagem está pulando
+// Cria um objeto para representar o cenário
+const cenario = {
+  cameraX: 0,
+  margemDireita: 0.2,
+};
 
-import { createCharacter } from "./components/character";
-import { createHtmlElement } from "./components/createHtmlElement";
+// Obtém o elemento canvas e seu contexto
+const canvas = document.getElementById("meuCanvas");
+const ctx = canvas.getContext("2d");
 
-const mainContent = createHtmlElement("canvas", "mainContent");
-const ctx = mainContent.getContext("2d");
-const player = createCharacter(
-  "Player",
-  100,
-  10,
-  "../resource/avatar/player/player-walk-000.png"
-);
-player.draw(ctx, 0, 0);
-player.attack(player);
-console.log(player.health);
-function loadWorld() {
-  mainContent.style.display = "flex";
-  mainContent.width = window.innerWidth;
-  mainContent.height = window.innerHeight;
-  mainContent.style.border = "1px solid red";
-  document.body.appendChild(mainContent);
+// Ajusta as dimensões do canvas para ocupar toda a tela
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Inicializa as propriedades do personagem
+personagem.x = canvas.width / 2;
+personagem.y = canvas.height - personagem.raio;
+personagem.pontoInicialX = personagem.x;
+
+// Função para desenhar o círculo na tela
+function desenharCirculo() {
+  // Limpa o canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Desenha o chão (retângulo verde)
+  ctx.fillStyle = "green";
+  ctx.fillRect(-cenario.cameraX, canvas.height - 20, canvas.width, 20);
+
+  // Desenha o círculo
+  ctx.beginPath();
+  ctx.arc(
+    personagem.x - cenario.cameraX,
+    personagem.y,
+    personagem.raio,
+    0,
+    Math.PI * 2
+  );
+  ctx.fillStyle = "blue";
+  ctx.fill();
+  ctx.closePath();
 }
 
-function drawTheWorld() {
-  ctx.clearRect(0, 0, mainContent.width, mainContent.height);
-  player.draw(ctx, 0, 0);
-  player.attack(player);
-  console.log(player.health);
+// Função para animar o círculo usando requestAnimationFrame
+function animar() {
+  // Atualiza a posição y do personagem
+  if (personagem.pulando) {
+    personagem.y -= personagem.dy;
+    personagem.dy -= personagem.aceleracaoGravitacional;
+
+    if (personagem.y >= canvas.height - personagem.raio) {
+      personagem.y = canvas.height - personagem.raio;
+      personagem.pulando = false;
+      personagem.dy = 0;
+    }
+  } else {
+    personagem.dy += personagem.aceleracaoGravitacional;
+    personagem.y += personagem.dy;
+
+    if (personagem.y >= canvas.height - personagem.raio) {
+      personagem.y = canvas.height - personagem.raio;
+      personagem.dy = 0;
+    }
+  }
+
+  // Atualiza a posição x do personagem
+  personagem.x += personagem.dx;
+
+  // Verifica se ultrapassou a largura máxima à esquerda e redefine para o ponto inicial
+  if (personagem.x - personagem.raio < 0) {
+    personagem.x = personagem.raio;
+  }
+
+  // Calcula a margem direita em pixels
+  const margemDireitaPixels = canvas.width * cenario.margemDireita;
+
+  // Verifica se ultrapassou a largura máxima à direita e move a câmera
+  if (personagem.x + personagem.raio + margemDireitaPixels > canvas.width) {
+    cenario.cameraX =
+      personagem.x - canvas.width + personagem.raio + margemDireitaPixels;
+  }
+
+  // Chama a função de desenho
+  desenharCirculo();
+
+  // Solicita o próximo quadro de animação
+  requestAnimationFrame(animar);
 }
 
-function characterMovement() {
-  window.addEventListener("keydown", (event) => {
-    const velocidade = 10; // character speed
-    const posicaoAtualX = parseFloat(getComputedStyle(character).left);
-
-    if (event.defaultPrevented) {
-      return; // Do nothing if the event was already processed
-    }
-    switch (event.key) {
-      case "ArrowLeft":
-        charPosition = false;
-        changeCharacterImage();
-        character.style.left = posicaoAtualX - velocidade + "px";
-        break;
-      case "ArrowRight":
-        charPosition = true;
-        changeCharacterImage();
-        character.style.left = posicaoAtualX + velocidade + "px";
-        break;
-      case "ArrowUp":
-        charPosition = true;
-        changeCharacterImage();
-        jump();
-        break;
-      case " ":
-        charPosition = true;
-        changeCharacterImage();
-        jump();
-        break;
-    }
-
-    function jump() {
-      isJumping = true; // Define a flag de pulo para verdadeiro
-      const jumpHeight = 50; // altura do pulo
-      let currentHeight = -650;
-
-      // Cria um intervalo para a animação de pulo
-      const jumpInterval = setInterval(() => {
-        currentHeight += 100;
-        character.style.bottom = currentHeight + "px";
-
-        if (currentHeight >= jumpHeight) {
-          clearInterval(jumpInterval); // Termina a animação de pulo
-
-          // Cria um intervalo para a animação de queda
-          const fallInterval = setInterval(() => {
-            currentHeight += 10;
-            character.style.bottom = currentHeight + "px";
-
-            if (currentHeight == 0) {
-              clearInterval(fallInterval); // Termina a animação de queda
-              isJumping = false; // Define a flag de pulo para falso
-            }
-          }, 50);
-        }
-      }, 50);
-    }
-  });
+// Função para lidar com eventos de teclas
+function handleKeyDown(event) {
+  switch (event.key) {
+    case "ArrowLeft":
+      personagem.dx = -5;
+      break;
+    case "ArrowRight":
+      personagem.dx = 5;
+      break;
+    case "ArrowUp":
+    case " ":
+      if (
+        !personagem.pulando &&
+        personagem.y === canvas.height - personagem.raio
+      ) {
+        personagem.pulando = true;
+        personagem.dy = personagem.puloVelocidade;
+      }
+      break;
+  }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  loadWorld();
-  drawTheWorld();
-  characterMovement();
-});
+// Função para lidar com eventos de teclas soltas
+function handleKeyUp(event) {
+  switch (event.key) {
+    case "ArrowLeft":
+    case "ArrowRight":
+      personagem.dx = 0;
+      break;
+  }
+}
+
+// Adiciona ouvintes de eventos para teclas pressionadas e soltas
+window.addEventListener("keydown", handleKeyDown);
+window.addEventListener("keyup", handleKeyUp);
+
+// Inicia a animação
+animar();
