@@ -1,5 +1,5 @@
-// Cria um objeto para representar o character
-const character = {
+// Cria um objeto para representar o personagem
+const personagem = {
   raio: 20,
   x: 0,
   y: 0,
@@ -26,13 +26,13 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Inicializa as propriedades do character
-character.x = canvas.width / 2;
-character.y = canvas.height - character.raio;
-character.pontoInicialX = character.x;
+// Inicializa as propriedades do personagem
+personagem.x = canvas.width / 2;
+personagem.y = canvas.height - personagem.raio;
+personagem.pontoInicialX = personagem.x;
 
 // Função para desenhar o círculo na tela
-function drawCharacter() {
+function desenharCirculo() {
   // Limpa o canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -43,9 +43,9 @@ function drawCharacter() {
   // Desenha o círculo
   ctx.beginPath();
   ctx.arc(
-    character.x - cenario.cameraX,
-    character.y,
-    character.raio,
+    personagem.x - cenario.cameraX,
+    personagem.y,
+    personagem.raio,
     0,
     Math.PI * 2
   );
@@ -56,45 +56,45 @@ function drawCharacter() {
 
 // Função para animar o círculo usando requestAnimationFrame
 function animar() {
-  // Atualiza a posição y do character
-  if (character.pulando) {
-    character.y -= character.dy;
-    character.dy -= character.aceleracaoGravitacional;
+  // Atualiza a posição y do personagem
+  if (personagem.pulando) {
+    personagem.y -= personagem.dy;
+    personagem.dy -= personagem.aceleracaoGravitacional;
 
-    if (character.y >= canvas.height - character.raio) {
-      character.y = canvas.height - character.raio;
-      character.pulando = false;
-      character.dy = 0;
+    if (personagem.y >= canvas.height - personagem.raio) {
+      personagem.y = canvas.height - personagem.raio;
+      personagem.pulando = false;
+      personagem.dy = 0;
     }
   } else {
-    character.dy += character.aceleracaoGravitacional;
-    character.y += character.dy;
+    personagem.dy += personagem.aceleracaoGravitacional;
+    personagem.y += personagem.dy;
 
-    if (character.y >= canvas.height - character.raio) {
-      character.y = canvas.height - character.raio;
-      character.dy = 0;
+    if (personagem.y >= canvas.height - personagem.raio) {
+      personagem.y = canvas.height - personagem.raio;
+      personagem.dy = 0;
     }
   }
 
-  // Atualiza a posição x do character
-  character.x += character.dx;
+  // Atualiza a posição x do personagem
+  personagem.x += personagem.dx;
 
   // Verifica se ultrapassou a largura máxima à esquerda e redefine para o ponto inicial
-  if (character.x - character.raio < 0) {
-    character.x = character.raio;
+  if (personagem.x - personagem.raio < 0) {
+    personagem.x = personagem.raio;
   }
 
   // Calcula a margem direita em pixels
   const margemDireitaPixels = canvas.width * cenario.margemDireita;
 
   // Verifica se ultrapassou a largura máxima à direita e move a câmera
-  if (character.x + character.raio + margemDireitaPixels > canvas.width) {
+  if (personagem.x + personagem.raio + margemDireitaPixels > canvas.width) {
     cenario.cameraX =
-      character.x - canvas.width + character.raio + margemDireitaPixels;
+      personagem.x - canvas.width + personagem.raio + margemDireitaPixels;
   }
 
   // Chama a função de desenho
-  drawCharacter();
+  desenharCirculo();
 
   // Solicita o próximo quadro de animação
   requestAnimationFrame(animar);
@@ -104,19 +104,19 @@ function animar() {
 function handleKeyDown(event) {
   switch (event.key) {
     case "ArrowLeft":
-      character.dx = -5;
+      personagem.dx = -5;
       break;
     case "ArrowRight":
-      character.dx = 5;
+      personagem.dx = 5;
       break;
     case "ArrowUp":
     case " ":
       if (
-        !character.pulando &&
-        character.y === canvas.height - character.raio
+        !personagem.pulando &&
+        personagem.y === canvas.height - personagem.raio
       ) {
-        character.pulando = true;
-        character.dy = character.puloVelocidade;
+        personagem.pulando = true;
+        personagem.dy = personagem.puloVelocidade;
       }
       break;
   }
@@ -127,7 +127,7 @@ function handleKeyUp(event) {
   switch (event.key) {
     case "ArrowLeft":
     case "ArrowRight":
-      character.dx = 0;
+      personagem.dx = 0;
       break;
   }
 }

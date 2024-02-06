@@ -1,0 +1,13 @@
+{
+  "name": "my-game",
+  "version": "1.0.0",
+  "description": "Meu jogo em JavaScript",
+  "main": "testApp.html",
+  "scripts": {
+    "start": "npx esm testApp.js"
+  },
+  "devDependencies": {
+    "esm": "^3.2.25"
+  },
+  "type": "module"
+}
