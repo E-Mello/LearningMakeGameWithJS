@@ -5,17 +5,20 @@ const character = {
   y: 0,
   pontoInicialX: 0,
   pulando: false,
-  puloVelocidade: 15,
-  puloAltura: 50,
+  puloVelocidade: 10,
+  puloAltura: 5,
   dy: 0,
-  aceleracaoGravitacional: 0.5,
+  aceleracaoGravitacional: 0.3,
   dx: 0,
 };
+
+// Cria o estado do personagem, pra frente ou pra tras true or false
+let characterState = true;
 
 // Cria um objeto para representar o cenário
 const cenario = {
   cameraX: 0,
-  margemDireita: 0.2,
+  margemDireita: 0.35,
 };
 
 // Obtém o elemento canvas e seu contexto
@@ -31,27 +34,44 @@ character.x = canvas.width / 2;
 character.y = canvas.height - character.raio;
 character.pontoInicialX = character.x;
 
-// Função para desenhar o círculo na tela
+// Carrega as imagens
+let img01Front = new Image();
+img01Front.src = "./resource/avatar/player/player-walk-000.png";
+let img02Front = new Image();
+img02Front.src = "./resource/avatar/player/player-walk-001.png";
+let img01Back = new Image();
+img01Back.src = "./resource/avatar/player/player-walk-back-000.png";
+let img02Back = new Image();
+img02Back.src = "./resource/avatar/player/player-walk-back-001.png";
+
+let charImg = img01Front; // Inicializa com a imagem de frente
+
+// Aguarda a imagem ser carregada antes de usá-la
+charImg.onload = function () {
+  // Agora você pode usar a imagem
+  animar();
+};
+
+// Função para desenhar o personagem
 function drawCharacter() {
+  // Desenha a imagem
+  ctx.drawImage(
+    charImg,
+    character.x - cenario.cameraX - character.raio,
+    character.y - character.raio,
+    character.raio * 2,
+    character.raio * 2
+  );
+}
+
+// Função para desenhar o chão
+function drawFloor() {
   // Limpa o canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Desenha o chão (retângulo verde)
   ctx.fillStyle = "green";
   ctx.fillRect(-cenario.cameraX, canvas.height - 20, canvas.width, 20);
-
-  // Desenha o círculo
-  ctx.beginPath();
-  ctx.arc(
-    character.x - cenario.cameraX,
-    character.y,
-    character.raio,
-    0,
-    Math.PI * 2
-  );
-  ctx.fillStyle = "blue";
-  ctx.fill();
-  ctx.closePath();
 }
 
 // Função para animar o círculo usando requestAnimationFrame
@@ -93,24 +113,48 @@ function animar() {
       character.x - canvas.width + character.raio + margemDireitaPixels;
   }
 
-  // Chama a função de desenho
+  // Chama a função de desenho do chão
+  drawFloor();
+  // Chama a função de desenho do personagem
   drawCharacter();
 
   // Solicita o próximo quadro de animação
   requestAnimationFrame(animar);
 }
 
+function changeCharacterImage() {
+  if (characterState == true) {
+    if (charImg != img02Front) {
+      charImg = img02Front;
+    } else {
+      charImg = img01Front;
+    }
+  } else {
+    if (charImg != img02Back) {
+      charImg = img02Back;
+    } else {
+      charImg = img01Back;
+    }
+  }
+}
+
 // Função para lidar com eventos de teclas
 function handleKeyDown(event) {
   switch (event.key) {
     case "ArrowLeft":
-      character.dx = -5;
+      characterState = false;
+      changeCharacterImage();
+      character.dx = -2.5;
       break;
     case "ArrowRight":
-      character.dx = 5;
+      characterState = true;
+      changeCharacterImage();
+      character.dx = 2.5;
       break;
     case "ArrowUp":
     case " ":
+      characterState = true;
+      changeCharacterImage();
       if (
         !character.pulando &&
         character.y === canvas.height - character.raio
