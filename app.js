@@ -1,7 +1,7 @@
 // Cria um objeto para representar o character
 const character = {
   raio: 20,
-  x: 0,
+  x: 50,
   y: 0,
   pontoInicialX: 0,
   pulando: false,
@@ -26,11 +26,11 @@ const canvas = document.getElementById("meuCanvas");
 const ctx = canvas.getContext("2d");
 
 // Ajusta as dimensões do canvas para ocupar toda a tela
-canvas.width = window.innerWidth;
+canvas.width = 2000;
 canvas.height = window.innerHeight;
 
 // Inicializa as propriedades do character
-character.x = canvas.width / 2;
+// character.x = canvas.width / 2;
 character.y = canvas.height - character.raio;
 character.pontoInicialX = character.x;
 
@@ -64,25 +64,45 @@ function drawCharacter() {
   );
 }
 
+let heightFromTheFloor = 17;
+// Carrega a imagem do chão
+let earthWide = new Image();
+earthWide.src = "./resource/cenario/earth-wide_03.png";
+
+earthWide.onload = function () {
+  // Agora você pode usar a imagem
+  animar();
+};
+
 // Função para desenhar o chão
 function drawFloor() {
   // Limpa o canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Desenha o chão (retângulo verde)
-  ctx.fillStyle = "green";
-  ctx.fillRect(-cenario.cameraX, canvas.height - 20, canvas.width, 20);
+  // Calcula quantas vezes a imagem precisa ser desenhada para preencher o chão
+  let numImages = Math.ceil(canvas.width / earthWide.width);
+
+  // Desenha a imagem repetidamente até preencher o chão
+  for (let i = 0; i < numImages; i++) {
+    ctx.drawImage(
+      earthWide,
+      i * earthWide.width - cenario.cameraX,
+      canvas.height - 17
+    );
+  }
 }
 
-// Função para animar o círculo usando requestAnimationFrame
+const tamanhoCenario = 5000;
+
+// Função para animar o personagem usando requestAnimationFrame
 function animar() {
   // Atualiza a posição y do character
   if (character.pulando) {
     character.y -= character.dy;
     character.dy -= character.aceleracaoGravitacional;
 
-    if (character.y >= canvas.height - character.raio) {
-      character.y = canvas.height - character.raio;
+    if (character.y >= canvas.height - character.raio - heightFromTheFloor) {
+      character.y = canvas.height - character.raio - heightFromTheFloor;
       character.pulando = false;
       character.dy = 0;
     }
@@ -90,8 +110,8 @@ function animar() {
     character.dy += character.aceleracaoGravitacional;
     character.y += character.dy;
 
-    if (character.y >= canvas.height - character.raio) {
-      character.y = canvas.height - character.raio;
+    if (character.y >= canvas.height - character.raio - heightFromTheFloor) {
+      character.y = canvas.height - character.raio - heightFromTheFloor;
       character.dy = 0;
     }
   }
@@ -157,7 +177,7 @@ function handleKeyDown(event) {
       changeCharacterImage();
       if (
         !character.pulando &&
-        character.y === canvas.height - character.raio
+        character.y === canvas.height - character.raio - heightFromTheFloor
       ) {
         character.pulando = true;
         character.dy = character.puloVelocidade;
