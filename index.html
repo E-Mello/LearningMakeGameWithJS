@@ -1,28 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Exemplo Canva com Controle de Pulo e Queda</title>
-    <link
-      rel="shortcut icon"
-      href="./resource/avatar/player/player-walk-000.png"
-      type="image/x-icon"
-    />
-    <style>
-      body,
-      html {
-        margin: 0;
-        overflow: hidden;
-      }
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo Simples com Movimentação</title>
+</head>
+<body>
+  <canvas id="meuCanvas" width="500" height="500"></canvas>
 
-      canvas {
-        display: block;
+  <script>
+    // Constantes
+    const VELOCIDADE_MOVIMENTO = 5;
+
+    // Variáveis
+    let canvas = document.getElementById("meuCanvas");
+    let ctx = canvas.getContext("2d");
+    let tempoDecorrido = 0;
+    let personagem = {
+      x: 250, // Posição X do personagem
+      y: 250, // Posição Y do personagem
+      raio: 20, // Raio do personagem
+      velocidadeX: 0, // Velocidade horizontal do personagem
+      velocidadeY: 0, // Velocidade vertical do personagem
+    };
+
+    // Função para animar o jogo
+    function animar() {
+      const dt = performance.now() - tempoDecorrido;
+      tempoDecorrido = performance.now();
+
+      atualizarPersonagem(dt);
+      desenhar();
+
+      requestAnimationFrame(animar);
+    }
+
+    // Função para atualizar o personagem
+    function atualizarPersonagem(dt) {
+      // Atualizar a posição do personagem
+      personagem.x += personagem.velocidadeX * dt;
+      personagem.y += personagem.velocidadeY * dt;
+
+      // Limitar a posição do personagem dentro do canvas
+      personagem.x = Math.max(personagem.raio, Math.min(canvas.width - personagem.raio, personagem.x));
+      personagem.y = Math.max(personagem.raio, Math.min(canvas.height - personagem.raio, personagem.y));
+    }
+
+    // Função para desenhar o personagem
+    function desenhar() {
+      // Limpar a tela
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Desenhar o personagem
+      ctx.fillStyle = "red";
+      ctx.beginPath();
+      ctx.arc(personagem.x, personagem.y, personagem.raio, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+
+    // Controle do personagem
+    document.addEventListener("keydown", function(e) {
+      switch (e.keyCode) {
+        case 37: // Seta para esquerda
+          personagem.velocidadeX = -VELOCIDADE_MOVIMENTO;
+          break;
+        case 38: // Seta para cima
+          personagem.velocidadeY = -VELOCIDADE_MOVIMENTO;
+          break;
+        case 39: // Seta para direita
+          personagem.velocidadeX = VELOCIDADE_MOVIMENTO;
+          break;
+        case 40: // Seta para baixo
+          personagem.velocidadeY = VELOCIDADE_MOVIMENTO;
+          break;
       }
-    </style>
-  </head>
-  <body>
-    <canvas id="meuCanvas"></canvas>
-    <script type="module" src="./app.js"></script>
-  </body>
+    });
+
+    // Iniciar a animação
+    animar();
+  </script>
+</body>
 </html>
