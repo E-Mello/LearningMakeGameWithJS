@@ -4,8 +4,8 @@ document.body.style.padding = "0";
 // Variables
 let isJumping = false; // Adiciona uma flag para verificar se o personagem está pulando
 
-import { createCharacter } from "../components/character";
-import { createHtmlElement } from "../components/createHtmlElement";
+import { createCharacter } from "../../components/character";
+import { createHtmlElement } from "../../components/createHtmlElement";
 
 const mainContent = createHtmlElement("canvas", "mainContent");
 const ctx = mainContent.getContext("2d");

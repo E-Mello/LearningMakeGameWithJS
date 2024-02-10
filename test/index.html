@@ -1,84 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript Game</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
   <body>
-    <canvas
-      id="myCanvas"
-      width="500"
-      height="200"
-      style="border: 1px solid #d3d3d3"
-    >
-      Your browser does not support the HTML5 canvas tag.
-    </canvas>
-
-    <script>
-      const canvas = document.getElementById("myCanvas");
-      const ctx = canvas.getContext("2d");
-
-      let x = 0;
-      let y = canvas.height - 100;
-      let dx = 0;
-      let dy = 0;
-      let jumping = false;
-
-      function draw() {
-        // Limpa o canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Desenha o quadrado
-        ctx.fillRect(x, y, 100, 100);
-
-        // Atualiza as posições x e y
-        x += dx;
-        y += dy;
-
-        // Se o quadrado saiu do lado esquerdo do canvas, faz ele voltar ao lado direito
-        if (x < -100) {
-          x = canvas.width;
-        }
-
-        if (jumping) {
-          dy += 1; // Aceleração devido à gravidade
-        }
-
-        // Se o quadrado atingiu o chão
-        if (y > canvas.height - 100) {
-          y = canvas.height - 100;
-          dy = 0;
-          jumping = false;
-        }
-
-        // Desenha o próximo quadro
-        window.requestAnimationFrame(draw);
-      }
-
-      window.requestAnimationFrame(draw);
-
-      window.addEventListener("keydown", function (event) {
-        switch (event.key) {
-          case "ArrowLeft":
-            dx = -2;
-            break;
-          case "ArrowRight":
-            dx = 2;
-            break;
-          case "ArrowUp":
-            if (!jumping) {
-              dy = -15; // Velocidade inicial do salto
-              dx *= 2; // Aumenta a velocidade horizontal durante o salto
-              jumping = true;
-            }
-            break;
-        }
-      });
-
-      window.addEventListener("keyup", function (event) {
-        switch (event.key) {
-          case "ArrowLeft":
-          case "ArrowRight":
-            dx = 0; // Para de mover quando a tecla é liberada
-            break;
-        }
-      });
-    </script>
+    <canvas id="canvas1"></canvas>
+    <script type="module" src="main.js"></script>
   </body>
 </html>
