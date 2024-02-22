@@ -133,7 +133,7 @@ window.addEventListener("load", function () {
       this.width = this.spriteWidth * 0.5;
       this.height = this.spriteHeight * 0.5;
       this.x = Math.random() * this.game.width;
-      this.y = this.height;
+      this.y = 0 - this.height;
       this.image = spider;
       this.vx = 0;
       this.vy = Math.random() * 0.1 + 0.1;
@@ -141,6 +141,7 @@ window.addEventListener("load", function () {
     }
     update(deltaTime) {
       super.update(deltaTime);
+      if (this.y < 0 - this.height * 2) this.markedForDeletion = true;
       this.y += this.vy * deltaTime;
       if (this.y > this.maxLength) this.vy *= -1;
     }
