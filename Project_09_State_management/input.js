@@ -7,33 +7,29 @@ export default class InputHandler {
           this.lastkey = "PRESS left";
           break;
         case "ArrowRight":
-          this.lastkey = "PRESS ArrowRight";
-          break;
-        case "ArrowUp":
-          this.lastkey = "PRESS ArrowUp";
+          this.lastkey = "PRESS right";
           break;
         case "ArrowDown":
-          this.lastkey = "PRESS ArrowDown";
+          this.lastkey = "PRESS down";
           break;
-        default:
+        case "ArrowUp":
+          this.lastkey = "PRESS up";
           break;
       }
     });
     window.addEventListener("keyup", (e) => {
       switch (e.key) {
         case "ArrowLeft":
-          this.lastkey = "Release left";
+          this.lastkey = "RELEASE left";
           break;
         case "ArrowRight":
-          this.lastkey = "Release ArrowRight";
-          break;
-        case "ArrowUp":
-          this.lastkey = "Release ArrowUp";
+          this.lastkey = "RELEASE right";
           break;
         case "ArrowDown":
-          this.lastkey = "Release ArrowDown";
+          this.lastkey = "RELEASE down";
           break;
-        default:
+        case "ArrowUp":
+          this.lastkey = "RELEASE up";
           break;
       }
     });
