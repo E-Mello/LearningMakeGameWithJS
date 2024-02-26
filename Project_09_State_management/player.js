@@ -9,6 +9,8 @@ import {
   StandingRight,
   JumpingLeft,
   JumpingRight,
+  FallingLeft,
+  FallingRight,
 } from "./state.js";
 
 export default class Player {
@@ -24,6 +26,8 @@ export default class Player {
       new RunningRight(this),
       new JumpingLeft(this),
       new JumpingRight(this),
+      new FallingLeft(this),
+      new FallingRight(this),
     ];
     this.currentState = this.states[1];
     this.image = dogImage;
@@ -32,13 +36,24 @@ export default class Player {
     this.x = this.gameHeight * 0.5 - this.width * 0.5;
     this.y = this.gameHeight - this.height;
     this.vy = 0;
-    this.weight = 0.5;
+    this.weight = 2;
     this.frameX = 0;
     this.frameY = 0;
+    this.maxFrame = 6;
     this.speed = 0;
-    this.maxSpeed = 10;
+    this.maxSpeed = 5;
+    this.fps = 20;
+    this.frameTimer = 0;
+    this.frameInterval = 1000 / this.fps;
   }
-  draw(context) {
+  draw(context, deltaTime) {
+    if (this.frameTimer > this.frameInterval) {
+      if (this.frameX < this.maxFrame) this.frameX++;
+      else this.frameX = 0;
+      this.frameTimer = 0;
+    } else {
+      this.frameTimer += deltaTime;
+    }
     // o método de desenho carrega 9 argumentos (método completo), o primeiro é a imagem
     // o segundo e o terceiro é o pedaço em que estamos recortando, da sprite de animações
     // o quarto e o quinto é o tamanho do recorte
@@ -69,6 +84,9 @@ export default class Player {
     } else {
       this.vy = 0;
     }
+    // make impossible the player moving below ground
+    if (this.y > this.gameHeight - this.height)
+      this.y = this.gameHeight - this.height;
   }
   setState(state) {
     this.currentState = this.states[state];
