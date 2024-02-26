@@ -1,13 +1,8 @@
-/**@E-Mello */
-/**@type {HTMLCanvasElement} */
-/**@version 1.0.0 */
-
 window.addEventListener("load", function () {
   const canvas = document.getElementById("canvas1");
   const ctx = canvas.getContext("2d");
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-
   const collisionCanvas = document.getElementById("collisionCanvas");
   const collisionCtx = collisionCanvas.getContext("2d");
   collisionCanvas.width = window.innerWidth;
@@ -22,7 +17,6 @@ window.addEventListener("load", function () {
   let lastTime = 0;
 
   let ravens = [];
-
   class Raven {
     constructor() {
       this.spriteWidth = 271;
@@ -36,7 +30,7 @@ window.addEventListener("load", function () {
       this.directionY = Math.random() * 5 - 2.5;
       this.markedForDeletion = false;
       this.image = new Image();
-      this.image.src = "./raven.png";
+      this.image.src = "https://frankslaboratory.co.uk/downloads/raven.png";
       this.frame = 0;
       this.maxFrame = 4;
       this.timeSinceFlap = 0;
@@ -96,11 +90,10 @@ window.addEventListener("load", function () {
   }
 
   let explosions = [];
-
   class Explosion {
     constructor(x, y, size) {
       this.image = new Image();
-      this.image.src = "./boom.png";
+      this.image.src = "https://frankslaboratory.co.uk/downloads/boom.png";
       this.spriteWidth = 200;
       this.spriteHeight = 179;
       this.size = size;
@@ -108,7 +101,7 @@ window.addEventListener("load", function () {
       this.y = y;
       this.frame = 0;
       this.sound = new Audio();
-      this.sound.src = "./Fire impact 1.wav";
+      this.sound.src = "https://frankslaboratory.co.uk/downloads/boom.wav";
       this.timeSinceLastFrame = 0;
       this.frameInterval = 200;
       this.markedForDeletion = false;
@@ -171,41 +164,20 @@ window.addEventListener("load", function () {
     ctx.fillStyle = "white";
     ctx.fillText("Score: " + score, 55, 80);
   }
-
   function drawGameOver() {
     ctx.textAlign = "center";
     ctx.fillStyle = "black";
     ctx.fillText(
       "GAME OVER, your score is " + score,
       canvas.width / 2,
-      canvas.height / 2 - 50
+      canvas.height / 2
     );
     ctx.fillStyle = "white";
     ctx.fillText(
-      "GAME OVER, your score is  " + score,
-      canvas.width / 2,
-      canvas.height / 2 - 55
+      "GAME OVER, your score is " + score,
+      canvas.width / 2 + 5,
+      canvas.height / 2 + 5
     );
-
-    // Draw the "try again" button
-    ctx.fillStyle = "#4CAF50"; // Green button color
-    ctx.fillRect(canvas.width / 4, canvas.height * 0.5, canvas.width / 2, 55);
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
-    ctx.fillText("Try Again", canvas.width / 2, canvas.height / 2 + 50, 75);
-
-    // Add click event listener to the button
-    canvas.addEventListener("click", function (e) {
-      if (gameOver == true) {
-        // Restart the game
-        gameOver = false;
-        score = 0;
-        ravens = [];
-        particles = [];
-        explosions = [];
-        animate(0);
-      }
-    });
   }
 
   window.addEventListener("click", function (e) {
